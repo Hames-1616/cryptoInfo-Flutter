@@ -7,6 +7,6 @@ A new Flutter project.
 Basic tracking of CryptoCoins
 
 ## Approach
-MVC with feature-first approach
-Riverpod for stateManagement
+MVC with feature-first approach  
+Riverpod for stateManagement  
 Cached Network image package for images
