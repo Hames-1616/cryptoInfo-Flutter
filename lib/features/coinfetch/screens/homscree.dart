@@ -316,29 +316,37 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                 ),
                                 Container(
                                   padding: const EdgeInsets.only(left: 80),
-                                  child: Column(children: [
-                                    Text(
-                                      convertString(info.dataModel[0].quoteModel
-                                          .usdModel.price),
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        convertString(info.dataModel[0].quoteModel
+                                            .usdModel.price),
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
                                     ),
-                                    Text(
-                                        convert24Percent(info
-                                            .dataModel[0]
-                                            .quoteModel
-                                            .usdModel
-                                            .percentChange_24h),
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: getcolor(convert24Percent(
-                                                info
-                                                    .dataModel[0]
-                                                    .quoteModel
-                                                    .usdModel
-                                                    .percentChange_24h))))
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                          convert24Percent(info
+                                              .dataModel[0]
+                                              .quoteModel
+                                              .usdModel
+                                              .percentChange_24h),
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: getcolor(convert24Percent(
+                                                  info
+                                                      .dataModel[0]
+                                                      .quoteModel
+                                                      .usdModel
+                                                      .percentChange_24h)))),
+                                    )
                                   ]),
                                 ),
                               ],
