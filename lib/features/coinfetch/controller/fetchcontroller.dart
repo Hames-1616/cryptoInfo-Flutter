@@ -12,8 +12,11 @@ final getallcoinsProvider = FutureProvider(
 final getpricecoinsProvider = FutureProvider(
     (ref) => ref.watch(fetchControllerProvider.notifier).getcoinsprice());
 
-    final getvolumnecoinsProvider = FutureProvider(
+final getvolumnecoinsProvider = FutureProvider(
     (ref) => ref.watch(fetchControllerProvider.notifier).getcoinsvolumne());
+
+final getimgprovider = FutureProvider.family(
+    (ref,String name) => ref.watch(fetchControllerProvider.notifier).getimg(name));
 
 class fetchController extends StateNotifier<bool> {
   final fetchtrpo frepo;
@@ -30,7 +33,11 @@ class fetchController extends StateNotifier<bool> {
     return await frepo.getcoinsprice();
   }
 
-    Future<BigDataModel> getcoinsvolumne() async {
+  Future<BigDataModel> getcoinsvolumne() async {
     return await frepo.getcoinsvolumne();
+  }
+
+  Future<String> getimg(String name) async {
+    return await frepo.geticon(name);
   }
 }

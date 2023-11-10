@@ -134,7 +134,7 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                         volume = false;
                                         price = true;
                                       });
-                                       Navigator.pop(context);
+                                      Navigator.pop(context);
                                     },
                                     child: const Text("Price"),
                                   ),
@@ -149,13 +149,15 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                     onPressed: () {
                                       setState(() {
                                         def = false;
-                                        
-                                        price = false;volume = true;
+
+                                        price = false;
+                                        volume = true;
                                       });
                                       Navigator.pop(context);
                                     },
                                     child: const Text("Volumne"),
-                                  ),ElevatedButton(
+                                  ),
+                                  ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.black,
                                       shape: RoundedRectangleBorder(
@@ -165,9 +167,9 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        
                                         volume = false;
-                                        price = false;def = true;
+                                        price = false;
+                                        def = true;
                                       });
                                       Navigator.pop(context);
                                     },
@@ -257,37 +259,60 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                           children: [
                             Row(
                               children: [
-                                Container(
-                                    height: 50,
-                                    width: 50,
-                                    child: CachedNetworkImage(
-                                      imageUrl:
-                                          "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[0].symbol).toLowerCase()}.png",
-                                      placeholder: (context, url) => const Icon(
-                                          Icons.currency_rupee_rounded),
-                                      errorWidget: (context, url, error) =>
-                                          const Center(
-                                        child: CircularProgressIndicator(
-                                            color: Colors.black),
-                                      ),
-                                    )),
+                                SizedBox(
+                                  height: 50,
+                                  width: 50,
+                                  child: ref
+                                      .watch(getimgprovider(
+                                          info.dataModel[0].symbol))
+                                      .when(
+                                          data: (data) {
+                                            return CachedNetworkImage(
+                                              imageUrl: data,
+                                              placeholder: (context, url) =>
+                                                  const Icon(Icons
+                                                      .currency_rupee_rounded),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        color: Colors.black),
+                                              ),
+                                            );
+                                          },
+                                          error: (e, t) {
+                                            return null;
+                                          },
+                                          loading: ()=>null),
+                                  
+                                ),
                                 Container(
                                   padding: const EdgeInsets.only(left: 5),
-                                  child: Column(children: [
-                                    Text(
-                                      info.dataModel[0].symbol,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Text(
-                                      "   ${info.dataModel[0].name}",
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                    )
-                                  ]),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            info.dataModel[0].symbol,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            info.dataModel[0].name,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        )
+                                      ]),
                                 ),
                                 Container(
                                   padding: const EdgeInsets.only(left: 80),
@@ -342,15 +367,15 @@ class _HomescreenState extends ConsumerState<Homescreen> {
           Container(
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(right: 30, left: 30, top: 30),
-            child:  Text(
+            child: Text(
               def
-                    ? "Top Cryptocurrency"
-                    : price
-                        ? "Price"
-                        : volume
-                            ? "Volume"
-                            : "",
-              style: TextStyle(
+                  ? "Top Cryptocurrency"
+                  : price
+                      ? "Price"
+                      : volume
+                          ? "Volume"
+                          : "",
+              style: const TextStyle(
                   color: Colors.black,
                   fontSize: 21,
                   fontWeight: FontWeight.w600),
@@ -382,22 +407,32 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      Container(
+                                      SizedBox(
                                           height: 60,
                                           width: 60,
-                                          child: CachedNetworkImage(
-                                            imageUrl:
-                                                "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[index + 1].symbol).toLowerCase()}.png",
-                                            placeholder: (context, url) =>
-                                                const Icon(Icons
-                                                    .currency_rupee_rounded),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Center(
-                                              child: CircularProgressIndicator(
-                                                  color: Colors.black),
-                                            ),
-                                          )),
+                                          child: ref
+                                      .watch(getimgprovider(
+                                          info.dataModel[index+1].symbol))
+                                      .when(
+                                          data: (data) {
+                                            return CachedNetworkImage(
+                                              imageUrl: data,
+                                              placeholder: (context, url) =>
+                                                  const Icon(Icons
+                                                      .currency_rupee_rounded),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        color: Colors.black),
+                                              ),
+                                            );
+                                          },
+                                          error: (e, t) {
+                                            return null;
+                                          },
+                                          loading: ()=>null),),
                                       // const SizedBox(width: 10,),
                                       Container(
                                         padding: const EdgeInsets.only(left: 5),
