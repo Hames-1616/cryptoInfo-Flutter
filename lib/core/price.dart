@@ -18,7 +18,6 @@ String convertString(num x) {
 
 String convert24Percent(num x) {
   String s = x.toString();
-  print(s);
   String returns = "";
   int i = 0;
   if (s[0] == "-") {

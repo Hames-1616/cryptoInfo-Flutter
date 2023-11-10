@@ -343,7 +343,7 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                 ),
                               ],
                             ),
-                            Container(
+                            SizedBox(
                                 height: 190,
                                 child: LineChartSample2(
                                   color: getcolor(convert24Percent(info
@@ -468,60 +468,46 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                           .quoteModel
                                           .usdModel
                                           .percentChange_24h))
-                                      // Align(
-                                      //   alignment: Alignment.centerLeft,
-                                      //   child: Container(
-                                      //     padding: EdgeInsets.only(right: 20),
-                                      //    height: 60,
-                                      //    width: 100,
-                                      //     child:
-                                      //    ),
-                                      // )
+                                    
                                     ],
                                   ),
-                                  Container(
-                                    // width: MediaQuery.of(context).size.width/2,
-                                    // alignment: Alignment.centerRight,
-
-                                    // padding: const EdgeInsets.only(left:80),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              convertString(info
+                                  Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            convertString(info
+                                                .dataModel[index + 1]
+                                                .quoteModel
+                                                .usdModel
+                                                .price),
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                              convert24Percent(info
                                                   .dataModel[index + 1]
                                                   .quoteModel
                                                   .usdModel
-                                                  .price),
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                                convert24Percent(info
-                                                    .dataModel[index + 1]
-                                                    .quoteModel
-                                                    .usdModel
-                                                    .percentChange_24h),
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: getcolor(
-                                                        convert24Percent(info
-                                                            .dataModel[
-                                                                index + 1]
-                                                            .quoteModel
-                                                            .usdModel
-                                                            .percentChange_24h)))),
-                                          )
-                                        ]),
-                                  ),
+                                                  .percentChange_24h),
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: getcolor(
+                                                      convert24Percent(info
+                                                          .dataModel[
+                                                              index + 1]
+                                                          .quoteModel
+                                                          .usdModel
+                                                          .percentChange_24h)))),
+                                        )
+                                      ]),
                                 ],
                               ),
                             );
