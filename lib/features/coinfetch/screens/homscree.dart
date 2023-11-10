@@ -13,6 +13,9 @@ class Homescreen extends ConsumerStatefulWidget {
 }
 
 class _HomescreenState extends ConsumerState<Homescreen> {
+  bool def = true;
+  bool price = false;
+  bool volume = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,8 +113,70 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                     focusColor: Colors.transparent,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    onTap: () {
-                     
+                    onTap: () async {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(
+                              children: [
+                                Column(children: [
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(100.0),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        def = false;
+                                        volume = false;
+                                        price = true;
+                                      });
+                                       Navigator.pop(context);
+                                    },
+                                    child: const Text("Price"),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(100.0),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        def = false;
+                                        
+                                        price = false;volume = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Volumne"),
+                                  ),ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.black,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(100.0),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        
+                                        volume = false;
+                                        price = false;def = true;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text("Top-default"),
+                                  ),
+                                ])
+                              ],
+                            );
+                          });
                     },
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +231,7 @@ class _HomescreenState extends ConsumerState<Homescreen> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.only(right:35,left: 35,top: 35),
+            margin: const EdgeInsets.only(right: 35, left: 35, top: 35),
             // padding: const EdgeInsets.only(right:35,left: 35,top: 35),
             alignment: Alignment.center,
             height: 180,
@@ -175,164 +240,264 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: Colors.black),
                 color: Colors.grey.shade300),
-            child: ref.watch(getallcoinsProvider).when(
-                data: (info) {
-                  return Container(
-                    margin: const EdgeInsets.only(right: 20,left: 20,top: 15),
-                    child: Column(
-                      children: [
-                        Row(
+            child: ref
+                .watch(def
+                    ? getallcoinsProvider
+                    : price
+                        ? getpricecoinsProvider
+                        : volume
+                            ? getvolumnecoinsProvider
+                            : getallcoinsProvider)
+                .when(
+                    data: (info) {
+                      return Container(
+                        margin:
+                            const EdgeInsets.only(right: 20, left: 20, top: 15),
+                        child: Column(
                           children: [
-                            Container(
-                             
-                              height: 50,
-                              width: 50,
-                              child: CachedNetworkImage(imageUrl:"https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[0].symbol).toLowerCase()}.png",
-                              placeholder: (context, url) => const Icon(Icons.currency_rupee_rounded),
-                              errorWidget:(context, url, error) => const Center(child: CircularProgressIndicator(color: Colors.black),),
-                              )
+                            Row(
+                              children: [
+                                Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[0].symbol).toLowerCase()}.png",
+                                      placeholder: (context, url) => const Icon(
+                                          Icons.currency_rupee_rounded),
+                                      errorWidget: (context, url, error) =>
+                                          const Center(
+                                        child: CircularProgressIndicator(
+                                            color: Colors.black),
+                                      ),
+                                    )),
+                                Container(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Column(children: [
+                                    Text(
+                                      info.dataModel[0].symbol,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                      "   ${info.dataModel[0].name}",
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                    )
+                                  ]),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.only(left: 80),
+                                  child: Column(children: [
+                                    Text(
+                                      convertString(info.dataModel[0].quoteModel
+                                          .usdModel.price),
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    Text(
+                                        convert24Percent(info
+                                            .dataModel[0]
+                                            .quoteModel
+                                            .usdModel
+                                            .percentChange_24h),
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: getcolor(convert24Percent(
+                                                info
+                                                    .dataModel[0]
+                                                    .quoteModel
+                                                    .usdModel
+                                                    .percentChange_24h))))
+                                  ]),
+                                ),
+                              ],
                             ),
                             Container(
-                              padding: const EdgeInsets.only(left:5),
-                              child: Column(children: [
-                                Text(info.dataModel[0].symbol,
-                                style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
-                  
-                                Text("   ${info.dataModel[0].name}",
-                                style: const TextStyle(fontSize: 15,),)
-                              ]),
-                            ),
-                            Container(
-                              
-                              padding: const EdgeInsets.only(left:80),
-                              child: Column(children: [
-                                Text(convertString(info.dataModel[0].quoteModel.usdModel.price),
-                                style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
-                  
-                                Text(convert24Percent(info.dataModel[0].quoteModel.usdModel.percentChange_24h),
-                                style:  TextStyle(fontSize: 15,color: getcolor(convert24Percent(info.dataModel[0].quoteModel.usdModel.percentChange_24h))))
-                              ]),
-                            ),
+                                height: 190,
+                                child: LineChartSample2(
+                                  color: getcolor(convert24Percent(info
+                                      .dataModel[0]
+                                      .quoteModel
+                                      .usdModel
+                                      .percentChange_24h)),
+                                  below: false,
+                                ))
                           ],
                         ),
-                        Container(
-                          
-                          height: 190,
-                          child: LineChartSample2(color:getcolor(convert24Percent(info.dataModel[0].quoteModel.usdModel.percentChange_24h)),below: false,))
-                      ],
-                    ),
-                  );
-                },
-                error: (e, st) {
-                  return Text(e.toString() + st.toString());
-                },
-                loading: () => const Center(
-                      child: CircularProgressIndicator(color: Colors.black),
-                    )),
+                      );
+                    },
+                    error: (e, st) {
+                      return Text(e.toString() + st.toString());
+                    },
+                    loading: () => const Center(
+                          child: CircularProgressIndicator(color: Colors.black),
+                        )),
           ),
           Container(
             alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(right:30,left:30,top:30),
-            child: const Text(
-                        "Top Cryptocurrencies",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 21,
-                            fontWeight: FontWeight.w600),
-                      ),
+            padding: const EdgeInsets.only(right: 30, left: 30, top: 30),
+            child:  Text(
+              def
+                    ? "Top Cryptocurrency"
+                    : price
+                        ? "Price"
+                        : volume
+                            ? "Volume"
+                            : "",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600),
+            ),
           ),
           Container(
-            padding: const EdgeInsets.only(left: 30,right:30,top: 20),
+            padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
             width: MediaQuery.of(context).size.width,
             height: 390,
-            child: ref.watch(getallcoinsProvider).when(
-                data: (info) {
-                  return ListView.builder(
-                      itemCount: 20,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: const EdgeInsets.only(bottom: 15),
-                          child:Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                
+            child: ref
+                .watch(def
+                    ? getallcoinsProvider
+                    : price
+                        ? getpricecoinsProvider
+                        : volume
+                            ? getvolumnecoinsProvider
+                            : getallcoinsProvider)
+                .when(
+                    data: (info) {
+                      return ListView.builder(
+                          itemCount: 20,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(bottom: 15),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                          height: 60,
+                                          width: 60,
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[index + 1].symbol).toLowerCase()}.png",
+                                            placeholder: (context, url) =>
+                                                const Icon(Icons
+                                                    .currency_rupee_rounded),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Center(
+                                              child: CircularProgressIndicator(
+                                                  color: Colors.black),
+                                            ),
+                                          )),
+                                      // const SizedBox(width: 10,),
+                                      Container(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  info.dataModel[index + 1]
+                                                      .symbol,
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  info.dataModel[index + 1]
+                                                      .name,
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              )
+                                            ]),
+                                      ),
+                                      Image.asset(getcolors(info
+                                          .dataModel[index + 1]
+                                          .quoteModel
+                                          .usdModel
+                                          .percentChange_24h))
+                                      // Align(
+                                      //   alignment: Alignment.centerLeft,
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.only(right: 20),
+                                      //    height: 60,
+                                      //    width: 100,
+                                      //     child:
+                                      //    ),
+                                      // )
+                                    ],
+                                  ),
                                   Container(
-                                  height: 60,
-                                  width: 60,
-                                  child: CachedNetworkImage(imageUrl:"https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[index+1].symbol).toLowerCase()}.png",
-                                  placeholder: (context, url) => const Icon(Icons.currency_rupee_rounded),
-                                  errorWidget:(context, url, error) => const Center(child: CircularProgressIndicator(color: Colors.black),),
-                                  )
-                            ),
-                              // const SizedBox(width: 10,),
-                              Container(
-                               padding: const EdgeInsets.only(left:5),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(info.dataModel[index+1].symbol,
-                                  style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
-                                ),
+                                    // width: MediaQuery.of(context).size.width/2,
+                                    // alignment: Alignment.centerRight,
 
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(info.dataModel[index+1].name,
-                                  style: const TextStyle(fontSize: 15,),),
-                                )
-                              ]),
-                            ), 
-                            Image.asset(getcolors(info.dataModel[index+1].quoteModel.usdModel.percentChange_24h))
-                            // Align(
-                            //   alignment: Alignment.centerLeft,
-                            //   child: Container(
-                            //     padding: EdgeInsets.only(right: 20),
-                            //    height: 60,
-                            //    width: 100,
-                            //     child: 
-                            //    ),
-                            // )
-                            ],
+                                    // padding: const EdgeInsets.only(left:80),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                              convertString(info
+                                                  .dataModel[index + 1]
+                                                  .quoteModel
+                                                  .usdModel
+                                                  .price),
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                                convert24Percent(info
+                                                    .dataModel[index + 1]
+                                                    .quoteModel
+                                                    .usdModel
+                                                    .percentChange_24h),
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: getcolor(
+                                                        convert24Percent(info
+                                                            .dataModel[
+                                                                index + 1]
+                                                            .quoteModel
+                                                            .usdModel
+                                                            .percentChange_24h)))),
+                                          )
+                                        ]),
+                                  ),
+                                ],
                               ),
-
-                            Container(
-                              // width: MediaQuery.of(context).size.width/2,
-                              // alignment: Alignment.centerRight,
-                              
-                              // padding: const EdgeInsets.only(left:80),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(convertString(info.dataModel[index+1].quoteModel.usdModel.price),
-                                  style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
-                                ),
-                  
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(convert24Percent(info.dataModel[index+1].quoteModel.usdModel.percentChange_24h),
-                                  style:  TextStyle(fontSize: 15,color: getcolor(convert24Percent(info.dataModel[index+1].quoteModel.usdModel.percentChange_24h)))),
-                                )
-                              ]),
-                            ),
-                            ],
-                          ) 
-                          ,
-                        );
-
-                      });
-                },
-                error: (e, st) {
-                  return Text(e.toString() + st.toString());
-                },
-                loading: () => const Center(
-                      child: CircularProgressIndicator(color: Colors.black),
-                    )),
+                            );
+                          });
+                    },
+                    error: (e, st) {
+                      return Text(e.toString() + st.toString());
+                    },
+                    loading: () => const Center(
+                          child: CircularProgressIndicator(color: Colors.black),
+                        )),
           ),
         ],
       )),

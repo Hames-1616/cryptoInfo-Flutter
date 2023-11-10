@@ -6,7 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final fetchControllerProvider = StateNotifierProvider<fetchController, bool>(
     (ref) => fetchController(cfrepo: ref.watch(fetchrepoProvider)));
 
-final getallcoinsProvider = FutureProvider((ref) => ref.watch(fetchControllerProvider.notifier).getallCoins());
+final getallcoinsProvider = FutureProvider(
+    (ref) => ref.watch(fetchControllerProvider.notifier).getallCoins());
+
+final getpricecoinsProvider = FutureProvider(
+    (ref) => ref.watch(fetchControllerProvider.notifier).getcoinsprice());
+
+    final getvolumnecoinsProvider = FutureProvider(
+    (ref) => ref.watch(fetchControllerProvider.notifier).getcoinsvolumne());
 
 class fetchController extends StateNotifier<bool> {
   final fetchtrpo frepo;
@@ -17,5 +24,13 @@ class fetchController extends StateNotifier<bool> {
 
   Future<BigDataModel> getallCoins() async {
     return await frepo.getopcoins();
+  }
+
+  Future<BigDataModel> getcoinsprice() async {
+    return await frepo.getcoinsprice();
+  }
+
+    Future<BigDataModel> getcoinsvolumne() async {
+    return await frepo.getcoinsvolumne();
   }
 }
