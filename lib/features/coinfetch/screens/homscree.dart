@@ -1,0 +1,341 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cryptos/core/graph.dart';
+import 'package:cryptos/core/price.dart';
+import 'package:cryptos/features/coinfetch/controller/fetchcontroller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class Homescreen extends ConsumerStatefulWidget {
+  const Homescreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomescreenState();
+}
+
+class _HomescreenState extends ConsumerState<Homescreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.only(left: 20, top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: const Text(
+                        "EXCHANGES",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.notifications,
+                      color: Colors.black,
+                      size: 28,
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(right: 25),
+                      child: const Icon(
+                        Icons.settings,
+                        color: Colors.black,
+                        size: 28,
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+      body: Center(
+          child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.only(top: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 265,
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.grey.shade300),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.search_rounded,
+                        color: Colors.black45,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Search Cryptocurrency",
+                        style: TextStyle(color: Colors.black45),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Container(
+                  height: 40,
+                  width: 80,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.black54)),
+                  child: InkWell(
+                    focusColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                     
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.filter_alt_rounded,
+                          color: Colors.black45,
+                        ),
+                        Text(
+                          "Filter",
+                          style: TextStyle(color: Colors.black45),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(left: 30, top: 30),
+            child: Row(
+              children: [
+                InkWell(
+                    onTap: () {},
+                    focusColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: const Text(
+                      "Cryptocurrency",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 21,
+                          fontWeight: FontWeight.w600),
+                    )),
+                const SizedBox(
+                  width: 25,
+                ),
+                InkWell(
+                    onTap: () {},
+                    focusColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: const Text(
+                      "NFT",
+                      style: TextStyle(
+                          color: Colors.black45,
+                          fontSize: 21,
+                          fontWeight: FontWeight.w600),
+                    )),
+              ],
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right:35,left: 35,top: 35),
+            // padding: const EdgeInsets.only(right:35,left: 35,top: 35),
+            alignment: Alignment.center,
+            height: 180,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.black),
+                color: Colors.grey.shade300),
+            child: ref.watch(getallcoinsProvider).when(
+                data: (info) {
+                  return Container(
+                    margin: const EdgeInsets.only(right: 20,left: 20,top: 15),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                             
+                              height: 50,
+                              width: 50,
+                              child: CachedNetworkImage(imageUrl:"https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[0].symbol).toLowerCase()}.png",
+                              placeholder: (context, url) => const Icon(Icons.currency_rupee_rounded),
+                              errorWidget:(context, url, error) => const Center(child: CircularProgressIndicator(color: Colors.black),),
+                              )
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(left:5),
+                              child: Column(children: [
+                                Text(info.dataModel[0].symbol,
+                                style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
+                  
+                                Text("   ${info.dataModel[0].name}",
+                                style: const TextStyle(fontSize: 15,),)
+                              ]),
+                            ),
+                            Container(
+                              
+                              padding: const EdgeInsets.only(left:80),
+                              child: Column(children: [
+                                Text(convertString(info.dataModel[0].quoteModel.usdModel.price),
+                                style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
+                  
+                                Text(convert24Percent(info.dataModel[0].quoteModel.usdModel.percentChange_24h),
+                                style:  TextStyle(fontSize: 15,color: getcolor(convert24Percent(info.dataModel[0].quoteModel.usdModel.percentChange_24h))))
+                              ]),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          
+                          height: 190,
+                          child: LineChartSample2(color:getcolor(convert24Percent(info.dataModel[0].quoteModel.usdModel.percentChange_24h)),below: false,))
+                      ],
+                    ),
+                  );
+                },
+                error: (e, st) {
+                  return Text(e.toString() + st.toString());
+                },
+                loading: () => const Center(
+                      child: CircularProgressIndicator(color: Colors.black),
+                    )),
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(right:30,left:30,top:30),
+            child: const Text(
+                        "Top Cryptocurrencies",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 21,
+                            fontWeight: FontWeight.w600),
+                      ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(left: 30,right:30,top: 20),
+            width: MediaQuery.of(context).size.width,
+            height: 390,
+            child: ref.watch(getallcoinsProvider).when(
+                data: (info) {
+                  return ListView.builder(
+                      itemCount: 20,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: const EdgeInsets.only(bottom: 15),
+                          child:Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                
+                                children: [
+                                  Container(
+                                  height: 60,
+                                  width: 60,
+                                  child: CachedNetworkImage(imageUrl:"https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/${(info.dataModel[index+1].symbol).toLowerCase()}.png",
+                                  placeholder: (context, url) => const Icon(Icons.currency_rupee_rounded),
+                                  errorWidget:(context, url, error) => const Center(child: CircularProgressIndicator(color: Colors.black),),
+                                  )
+                            ),
+                              // const SizedBox(width: 10,),
+                              Container(
+                               padding: const EdgeInsets.only(left:5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(info.dataModel[index+1].symbol,
+                                  style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
+                                ),
+
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(info.dataModel[index+1].name,
+                                  style: const TextStyle(fontSize: 15,),),
+                                )
+                              ]),
+                            ), 
+                            Image.asset(getcolors(info.dataModel[index+1].quoteModel.usdModel.percentChange_24h))
+                            // Align(
+                            //   alignment: Alignment.centerLeft,
+                            //   child: Container(
+                            //     padding: EdgeInsets.only(right: 20),
+                            //    height: 60,
+                            //    width: 100,
+                            //     child: 
+                            //    ),
+                            // )
+                            ],
+                              ),
+
+                            Container(
+                              // width: MediaQuery.of(context).size.width/2,
+                              // alignment: Alignment.centerRight,
+                              
+                              // padding: const EdgeInsets.only(left:80),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(convertString(info.dataModel[index+1].quoteModel.usdModel.price),
+                                  style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),),
+                                ),
+                  
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(convert24Percent(info.dataModel[index+1].quoteModel.usdModel.percentChange_24h),
+                                  style:  TextStyle(fontSize: 15,color: getcolor(convert24Percent(info.dataModel[index+1].quoteModel.usdModel.percentChange_24h)))),
+                                )
+                              ]),
+                            ),
+                            ],
+                          ) 
+                          ,
+                        );
+
+                      });
+                },
+                error: (e, st) {
+                  return Text(e.toString() + st.toString());
+                },
+                loading: () => const Center(
+                      child: CircularProgressIndicator(color: Colors.black),
+                    )),
+          ),
+        ],
+      )),
+    );
+  }
+}
