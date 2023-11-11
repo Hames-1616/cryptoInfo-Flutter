@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cryptos/core/graph.dart';
+import 'package:cryptos/core/loadingScreen.dart';
 import 'package:cryptos/core/price.dart';
+import 'package:cryptos/core/providers.dart';
 import 'package:cryptos/features/coinfetch/controller/fetchcontroller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,12 +15,10 @@ class Homescreen extends ConsumerStatefulWidget {
 }
 
 class _HomescreenState extends ConsumerState<Homescreen> {
-  bool def = true;
-  bool price = false;
-  bool volume = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ref.watch(fetchControllerProvider)?const loading():
+    Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
@@ -130,9 +130,10 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        def = false;
-                                        volume = false;
-                                        price = true;
+                                        ref
+                                          .watch(
+                                              fetchControllerProvider.notifier)
+                                          .getcoinsprice(ref);
                                       });
                                       Navigator.pop(context);
                                     },
@@ -148,10 +149,10 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        def = false;
-
-                                        price = false;
-                                        volume = true;
+                                        ref
+                                          .watch(
+                                              fetchControllerProvider.notifier)
+                                          .getcoinsvolumne(ref);
                                       });
                                       Navigator.pop(context);
                                     },
@@ -167,9 +168,10 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        volume = false;
-                                        price = false;
-                                        def = true;
+                                        ref
+                                          .watch(
+                                              fetchControllerProvider.notifier)
+                                          .getallcoinss(ref);
                                       });
                                       Navigator.pop(context);
                                     },
@@ -242,88 +244,76 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: Colors.black),
                 color: Colors.grey.shade300),
-            child: ref
-                .watch(def
-                    ? getallcoinsProvider
-                    : price
-                        ? getpricecoinsProvider
-                        : volume
-                            ? getvolumnecoinsProvider
-                            : getallcoinsProvider)
-                .when(
-                    data: (info) {
-                      return Container(
-                        margin:
-                            const EdgeInsets.only(right: 20, left: 20, top: 15),
-                        child: Column(
+            child: ref.watch(getallcoinsProvider(ref)).when(
+                data: (d) {
+                  final info = ref.watch(coinsprovider.notifier).state;
+                  return Container(
+                    margin: const EdgeInsets.only(right: 20, left: 20, top: 15),
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 50,
-                                  width: 50,
-                                  child: ref
-                                      .watch(getimgprovider(
-                                          info.dataModel[0].symbol))
-                                      .when(
-                                          data: (data) {
-                                            return CachedNetworkImage(
-                                              imageUrl: data,
-                                              placeholder: (context, url) =>
-                                                  const Icon(Icons
-                                                      .currency_rupee_rounded),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                        color: Colors.black),
-                                              ),
-                                            );
-                                          },
-                                          error: (e, t) {
-                                            return null;
-                                          },
-                                          loading: ()=>null),
-                                  
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.only(left: 5),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            info.dataModel[0].symbol,
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                            SizedBox(
+                              height: 50,
+                              width: 50,
+                              child: ref
+                                  .watch(
+                                      getimgprovider(info.dataModel[0].symbol))
+                                  .when(
+                                      data: (data) {
+                                        return CachedNetworkImage(
+                                          imageUrl: data,
+                                          placeholder: (context, url) =>
+                                              const Icon(
+                                                  Icons.currency_rupee_rounded),
+                                          errorWidget: (context, url, error) =>
+                                              const Center(
+                                            child: CircularProgressIndicator(
+                                                color: Colors.black),
                                           ),
+                                        );
+                                      },
+                                      error: (e, t) {
+                                        return null;
+                                      },
+                                      loading: () => null),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(left: 5),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        info.dataModel[0].symbol,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
                                         ),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            info.dataModel[0].name,
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        )
-                                      ]),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.only(left: 80),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        info.dataModel[0].name,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    )
+                                  ]),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.only(left: 80),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
                                     Align(
                                       alignment: Alignment.centerRight,
                                       child: Text(
-                                        convertString(info.dataModel[0].quoteModel
-                                            .usdModel.price),
+                                        convertString(info.dataModel[0]
+                                            .quoteModel.usdModel.price),
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.w500,
@@ -348,42 +338,33 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                                                       .percentChange_24h)))),
                                     )
                                   ]),
-                                ),
-                              ],
                             ),
-                            SizedBox(
-                                height: 190,
-                                child: LineChartSample2(
-                                  color: getcolor(convert24Percent(info
-                                      .dataModel[0]
-                                      .quoteModel
-                                      .usdModel
-                                      .percentChange_24h)),
-                                  below: false,
-                                ))
                           ],
                         ),
-                      );
-                    },
-                    error: (e, st) {
-                      return Text(e.toString() + st.toString());
-                    },
-                    loading: () => const Center(
-                          child: CircularProgressIndicator(color: Colors.black),
-                        )),
+                        SizedBox(
+                            height: 190,
+                            child: LineChartSample2(
+                              color: getcolor(convert24Percent(info.dataModel[0]
+                                  .quoteModel.usdModel.percentChange_24h)),
+                              below: false,
+                            ))
+                      ],
+                    ),
+                  );
+                },
+                error: (e, st) {
+                  return Text(e.toString() + st.toString());
+                },
+                loading: () => const Center(
+                      child: CircularProgressIndicator(color: Colors.black),
+                    )),
           ),
           Container(
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(right: 30, left: 30, top: 30),
-            child: Text(
-              def
-                  ? "Top Cryptocurrency"
-                  : price
-                      ? "Price"
-                      : volume
-                          ? "Volume"
-                          : "",
-              style: const TextStyle(
+            child: const Text(
+              "CryptoCurriences",
+              style: TextStyle(
                   color: Colors.black,
                   fontSize: 21,
                   fontWeight: FontWeight.w600),
@@ -393,140 +374,125 @@ class _HomescreenState extends ConsumerState<Homescreen> {
             padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
             width: MediaQuery.of(context).size.width,
             height: 390,
-            child: ref
-                .watch(def
-                    ? getallcoinsProvider
-                    : price
-                        ? getpricecoinsProvider
-                        : volume
-                            ? getvolumnecoinsProvider
-                            : getallcoinsProvider)
-                .when(
-                    data: (info) {
-                      return ListView.builder(
-                          itemCount: 20,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: const EdgeInsets.only(bottom: 15),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+            child: ref.watch(getallcoinsProvider(ref)).when(
+                data: (data) {
+                  final info = ref.watch(coinsprovider.notifier).state;
+                  return ListView.builder(
+                      itemCount: 20,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: const EdgeInsets.only(bottom: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                          height: 60,
-                                          width: 60,
-                                          child: ref
-                                      .watch(getimgprovider(
-                                          info.dataModel[index+1].symbol))
-                                      .when(
-                                          data: (data) {
-                                            return CachedNetworkImage(
-                                              imageUrl: data,
-                                              placeholder: (context, url) =>
-                                                  const Icon(Icons
-                                                      .currency_rupee_rounded),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                        color: Colors.black),
-                                              ),
-                                            );
-                                          },
-                                          error: (e, t) {
-                                            return null;
-                                          },
-                                          loading: ()=>null),),
-                                      // const SizedBox(width: 10,),
-                                      Container(
-                                        padding: const EdgeInsets.only(left: 5),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  info.dataModel[index + 1]
-                                                      .symbol,
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                  SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: ref
+                                        .watch(getimgprovider(
+                                            info.dataModel[index + 1].symbol))
+                                        .when(
+                                            data: (data) {
+                                              return CachedNetworkImage(
+                                                imageUrl: data,
+                                                placeholder: (context, url) =>
+                                                    const Icon(Icons
+                                                        .currency_rupee_rounded),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        const Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          color: Colors.black),
                                                 ),
-                                              ),
-                                              Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  info.dataModel[index + 1]
-                                                      .name,
-                                                  style: const TextStyle(
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                              )
-                                            ]),
-                                      ),
-                                      Image.asset(getcolors(info
-                                          .dataModel[index + 1]
-                                          .quoteModel
-                                          .usdModel
-                                          .percentChange_24h))
-                                    
-                                    ],
+                                              );
+                                            },
+                                            error: (e, t) {
+                                              return null;
+                                            },
+                                            loading: () => null),
                                   ),
-                                  Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            convertString(info
-                                                .dataModel[index + 1]
-                                                .quoteModel
-                                                .usdModel
-                                                .price),
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
+                                  // const SizedBox(width: 10,),
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              info.dataModel[index + 1].symbol,
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                              convert24Percent(info
-                                                  .dataModel[index + 1]
-                                                  .quoteModel
-                                                  .usdModel
-                                                  .percentChange_24h),
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: getcolor(
-                                                      convert24Percent(info
-                                                          .dataModel[
-                                                              index + 1]
-                                                          .quoteModel
-                                                          .usdModel
-                                                          .percentChange_24h)))),
-                                        )
-                                      ]),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              info.dataModel[index + 1].name,
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          )
+                                        ]),
+                                  ),
+                                  Image.asset(getcolors(info
+                                      .dataModel[index + 1]
+                                      .quoteModel
+                                      .usdModel
+                                      .percentChange_24h))
                                 ],
                               ),
-                            );
-                          });
-                    },
-                    error: (e, st) {
-                      return Text(e.toString() + st.toString());
-                    },
-                    loading: () => const Center(
-                          child: CircularProgressIndicator(color: Colors.black),
-                        )),
+                              Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        convertString(info.dataModel[index + 1]
+                                            .quoteModel.usdModel.price),
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                          convert24Percent(info
+                                              .dataModel[index + 1]
+                                              .quoteModel
+                                              .usdModel
+                                              .percentChange_24h),
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: getcolor(convert24Percent(
+                                                  info
+                                                      .dataModel[index + 1]
+                                                      .quoteModel
+                                                      .usdModel
+                                                      .percentChange_24h)))),
+                                    )
+                                  ]),
+                            ],
+                          ),
+                        );
+                      });
+                },
+                error: (e, st) {
+                  return Text(e.toString() + st.toString());
+                },
+                loading: () => const Center(
+                      child: CircularProgressIndicator(color: Colors.black),
+                    )),
           ),
         ],
       )),
