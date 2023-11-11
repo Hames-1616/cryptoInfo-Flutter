@@ -236,7 +236,6 @@ class _HomescreenState extends ConsumerState<Homescreen> {
           ),
           Container(
             margin: const EdgeInsets.only(right: 35, left: 35, top: 35),
-            // padding: const EdgeInsets.only(right:35,left: 35,top: 35),
             alignment: Alignment.center,
             height: 180,
             width: MediaQuery.of(context).size.width,
@@ -341,8 +340,9 @@ class _HomescreenState extends ConsumerState<Homescreen> {
                             ),
                           ],
                         ),
-                        SizedBox(
-                            height: 190,
+                        // SizedBox(
+                        //     height: 190,
+                        Expanded(
                             child: LineChartSample2(
                               color: getcolor(convert24Percent(info.dataModel[0]
                                   .quoteModel.usdModel.percentChange_24h)),
